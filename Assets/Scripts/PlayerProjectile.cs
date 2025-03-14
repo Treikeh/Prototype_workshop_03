@@ -19,6 +19,7 @@ public class PlayerProjectile : MonoBehaviour
         {
             Destroy(other.gameObject);
             Debug.Log("Enemy Hit");
+            Events.enemyKilled?.Invoke(5);
         }
     }
 }
