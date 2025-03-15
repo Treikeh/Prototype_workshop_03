@@ -1,16 +1,18 @@
+using System.Threading;
 using UnityEngine;
 
 public class TriangleEnemyBehavior : MonoBehaviour
 {
-    public float moveDistance = 1f;
-    public float moveSpeed = 1f;
+    public float strafeDistance = 1f;
+    public float strafeSpeed = 1f;
+    public float moveSpeed = 0.5f;
     public float rotSpeed = 5f;
     public float fireRate = 1f;
     public Transform muzzle;
     public GameObject projectilePrefab;
 
     private float shootTimer = 0f;
-    private Vector2 startingPosition;
+    private float strafeTimeOffset = 0.0f;
 
     
     private GameObject player;
@@ -18,14 +20,15 @@ public class TriangleEnemyBehavior : MonoBehaviour
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
-        startingPosition = transform.position;
+        strafeTimeOffset = Time.time;
     }
 
     void Update()
     {
         // Move enemy
-        Vector2 newPos = startingPosition;
-        newPos.x += moveDistance * Mathf.Sin(Time.time * moveSpeed);
+        Vector2 newPos = transform.position;
+        newPos.x = strafeDistance * Mathf.Sin((Time.time - strafeTimeOffset) * strafeSpeed);
+        newPos.y -= moveSpeed * Time.deltaTime;
         transform.position = newPos;
 
         // Make enemy look at player
@@ -38,13 +41,30 @@ public class TriangleEnemyBehavior : MonoBehaviour
         shootTimer += Time.deltaTime;
         if (shootTimer >= fireRate)
         {
-            SpawnProjectile();
+            Instantiate(projectilePrefab, muzzle.position, muzzle.rotation);
             shootTimer = 0f;
         }
     }
 
-    void SpawnProjectile()
+void OnTriggerEnter2D(Collider2D other)
     {
-        Instantiate(projectilePrefab, muzzle.position, muzzle.rotation);
+        switch (other.tag)
+        {
+            case "Player":
+                // Only destroy enemy
+                DestroyEnemy();
+                break;
+            case "PlayerProjectile":
+                // Destroy enemy and projectile
+                DestroyEnemy();
+                Destroy(other.gameObject);
+                break;
+        }
+    }
+
+    void DestroyEnemy()
+    {
+        Events.enemyKilled?.Invoke(5);
+        Destroy(gameObject);
     }
 }

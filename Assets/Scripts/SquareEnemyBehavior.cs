@@ -19,4 +19,26 @@ public class SquareEnemyBehavior : MonoBehaviour
         rBody.linearVelocityX = moveDir.x * moveSpeed * Time.fixedDeltaTime;
         rBody.linearVelocityY = moveDir.y * moveSpeed * Time.fixedDeltaTime;
     }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        switch (other.tag)
+        {
+            case "Player":
+                // Only destroy enemy
+                DestroyEnemy();
+                break;
+            case "PlayerProjectile":
+                // Destroy enemy and projectile
+                DestroyEnemy();
+                Destroy(other.gameObject);
+                break;
+        }
+    }
+
+    void DestroyEnemy()
+    {
+        Events.enemyKilled?.Invoke(5);
+        Destroy(gameObject);
+    }
 }

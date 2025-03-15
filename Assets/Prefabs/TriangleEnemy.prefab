@@ -142,8 +142,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0b5a58446aac7c469f0f87b3747ba22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveDistance: 3
-  moveSpeed: 1
+  strafeDistance: 1.5
+  strafeSpeed: 3
+  moveSpeed: 0.5
   rotSpeed: 10
   fireRate: 1
   muzzle: {fileID: 7340785787318757517}
