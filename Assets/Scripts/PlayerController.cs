@@ -7,35 +7,41 @@ public class PlayerController : MonoBehaviour
     public Transform muzzle;
     public GameObject projectilePrefab;
 
-    private Vector2 moveInput;
-    private Rigidbody2D rBody;
+    private bool canShoot = true;
     private Camera mainCam;
 
 
     void Start()
     {
-        rBody = GetComponent<Rigidbody2D>();
         mainCam = Camera.main;
-    }
-
-    void Update()
-    {
-        // Movement input
-        moveInput.x = Input.GetAxisRaw("Horizontal");
-        moveInput.y = Input.GetAxisRaw("Vertical");
-        moveInput = moveInput.normalized;
-
-        // Shoot input
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Instantiate(projectilePrefab, muzzle.position, muzzle.rotation);
-        }
     }
 
     void FixedUpdate()
     {
-        // Get mouse position
-        Vector3 mousePos = Input.mousePosition;
-        muzzle.transform.position = mainCam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, mainCam.nearClipPlane + 2f));
+        // Move player to mouse position
+        Vector3 mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
+        transform.position = new Vector3(mousePos.x, mousePos.y, 0f);
+
+        // Spawn projectiles when pressing left mouse button
+        if (Input.GetMouseButtonDown(0) && canShoot == true)
+        {
+            canShoot = false;
+            Instantiate(projectilePrefab, muzzle.position, muzzle.rotation);
+            Invoke("ResetCanShoot", fireRate);
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == "Enemy")
+        {
+            // Take Damage
+            Debug.Log("Player Hit");
+        }
+    }
+
+    void ResetCanShoot()
+    {
+        canShoot = true;
     }
 }
