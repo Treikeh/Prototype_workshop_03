@@ -9,6 +9,12 @@ public class EnemySpawner : MonoBehaviour
 
     void Update()
     {
+        // Don't spawn enemies if game isn't active
+        if (GameManager.gameState != GameManager.GameStates.Active)
+        {
+            return;
+        }
+
         spawnTimer += Time.deltaTime;
         if (spawnTimer >= spawnDelay)
         {

@@ -10,11 +10,10 @@ public class TriangleEnemyBehavior : MonoBehaviour
     public float fireRate = 1f;
     public Transform muzzle;
     public GameObject projectilePrefab;
+    public GameObject explosionPrefab;
 
     private float shootTimer = 0f;
     private float strafeTimeOffset = 0.0f;
-
-    
     private GameObject player;
 
     void Start()
@@ -31,6 +30,11 @@ public class TriangleEnemyBehavior : MonoBehaviour
         newPos.y -= moveSpeed * Time.deltaTime;
         transform.position = newPos;
 
+        // Stop here when player is gone
+        if (!player)
+        {
+            return;
+        }
         // Make enemy look at player
         Vector3 vectorToTarget = player.transform.position - transform.position;
         float angle = Mathf.Atan2(vectorToTarget.y, vectorToTarget.x) * Mathf.Rad2Deg;
@@ -48,6 +52,7 @@ public class TriangleEnemyBehavior : MonoBehaviour
 
 void OnTriggerEnter2D(Collider2D other)
     {
+        // Do different things based on what hits it
         switch (other.tag)
         {
             case "Player":
@@ -64,7 +69,8 @@ void OnTriggerEnter2D(Collider2D other)
 
     void DestroyEnemy()
     {
-        Events.enemyKilled?.Invoke(5);
+        GameManager.EnemyKilled(10);
+        Instantiate(explosionPrefab, transform.position, transform.rotation);
         Destroy(gameObject);
     }
 }

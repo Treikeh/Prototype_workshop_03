@@ -1,13 +1,19 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 400f;
     public float fireRate = 0.25f;
+    public int livesRemaning = 3;
     public Transform muzzle;
     public GameObject projectilePrefab;
+    public SpriteRenderer playerSprite;
+    public AudioSource hitSound;
+    public GameObject explosionPrefab;
 
     private bool canShoot = true;
+    private bool isProtected = false;
     private Camera mainCam;
 
 
@@ -18,12 +24,18 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        // Don't move player when game isn't active
+        if (GameManager.gameState != GameManager.GameStates.Active)
+        {
+            return;
+        }
+
         // Move player to mouse position
         Vector3 mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
         transform.position = new Vector3(mousePos.x, mousePos.y, 0f);
 
         // Spawn projectiles when pressing left mouse button
-        if (Input.GetMouseButtonDown(0) && canShoot == true)
+        if (Input.GetMouseButton(0) && canShoot == true)
         {
             canShoot = false;
             Instantiate(projectilePrefab, muzzle.position, muzzle.rotation);
@@ -33,15 +45,41 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Enemy")
+        if (other.tag == "Enemy" && isProtected == false)
         {
             // Take Damage
-            Debug.Log("Player Hit");
+            isProtected = true;
+            StartCoroutine(PlayerHitFlasing());
+            GameManager.playerHit?.Invoke();
+            livesRemaning--;
+            hitSound.Play();
+            if (livesRemaning <= 0)
+            {
+                // End game when player is killed
+                GameManager.EndGame();
+                Instantiate(explosionPrefab, transform.position, transform.rotation);
+                Destroy(gameObject);
+            }
         }
     }
 
     void ResetCanShoot()
     {
         canShoot = true;
+    }
+
+    IEnumerator PlayerHitFlasing()
+    {
+        int flashAmount = 6;
+        while (flashAmount > 0)
+        {
+            playerSprite.color = new Color(0f, 0f, 0f, 0f);
+            yield return new WaitForSeconds(.1f);
+            playerSprite.color = Color.white;
+            yield return new WaitForSeconds(.1f);
+            flashAmount --;
+            yield return null;
+        }
+        isProtected = false;
     }
 }

@@ -3,6 +3,8 @@ using UnityEngine;
 public class SquareEnemyBehavior : MonoBehaviour
 {
     public float moveSpeed = 100f;
+    public GameObject explosionPrefab;
+
     private GameObject player;
     private Rigidbody2D rBody;
 
@@ -15,6 +17,11 @@ public class SquareEnemyBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Don't do anything when player is gone
+        if (!player)
+        {
+            return;
+        }
         Vector2 moveDir = (player.transform.position - transform.position).normalized;
         rBody.linearVelocityX = moveDir.x * moveSpeed * Time.fixedDeltaTime;
         rBody.linearVelocityY = moveDir.y * moveSpeed * Time.fixedDeltaTime;
@@ -22,6 +29,7 @@ public class SquareEnemyBehavior : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        // Do different things based on what hits it
         switch (other.tag)
         {
             case "Player":
@@ -38,7 +46,8 @@ public class SquareEnemyBehavior : MonoBehaviour
 
     void DestroyEnemy()
     {
-        Events.enemyKilled?.Invoke(5);
+        GameManager.EnemyKilled(10);
+        Instantiate(explosionPrefab, transform.position, transform.rotation);
         Destroy(gameObject);
     }
 }
