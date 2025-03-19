@@ -11,21 +11,14 @@ public class Ui : MonoBehaviour
 
     void OnEnable()
     {
-        GameManager.playerHit += OnPlayerHit;
         GameManager.gameOver += OnGameOver;
         GameManager.enemyKilled += OnEnemyKilled;
     }
 
-    void OnDsiable()
+    void OnDisable()
     {
-        GameManager.playerHit -= OnPlayerHit;
         GameManager.gameOver -= OnGameOver;
         GameManager.enemyKilled -= OnEnemyKilled;
-    }
-
-    private void OnPlayerHit()
-    {
-        //
     }
 
     private void OnGameOver()

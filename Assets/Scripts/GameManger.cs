@@ -4,7 +4,6 @@ using UnityEngine;
 public static class GameManager
 {
     public static Action gameOver;
-    public static Action playerHit;
     public static Action enemyKilled;
 
     public enum GameStates {Start, Active, End}

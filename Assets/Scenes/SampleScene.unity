@@ -1186,7 +1186,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 300
-  fireRate: 0.35
+  fireRate: 0.5
   livesRemaning: 3
   muzzle: {fileID: 506132839}
   projectilePrefab: {fileID: 2305809645575162676, guid: ced0cc04a0c82034993bc3d2d94f00a7, type: 3}
@@ -1671,7 +1671,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Press LMB to start
+  m_text: Press & hold LMB
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b693fa3d89f6d8a4b87d45f0dc494ee2, type: 2}
   m_sharedMaterial: {fileID: 1111631854455207703, guid: b693fa3d89f6d8a4b87d45f0dc494ee2, type: 2}

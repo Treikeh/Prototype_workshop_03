@@ -29,17 +29,19 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
-
-        // Move player to mouse position
-        Vector3 mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
-        transform.position = new Vector3(mousePos.x, mousePos.y, 0f);
-
-        // Spawn projectiles when pressing left mouse button
-        if (Input.GetMouseButton(0) && canShoot == true)
+        
+        if (Input.GetMouseButton(0))
         {
-            canShoot = false;
-            Instantiate(projectilePrefab, muzzle.position, muzzle.rotation);
-            Invoke("ResetCanShoot", fireRate);
+            // Move player to mouse position
+            Vector3 mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
+            transform.position = new Vector3(mousePos.x, mousePos.y, 0f);
+            // Spawn projectiles
+            if (canShoot == true)
+            {
+                canShoot = false;
+                Instantiate(projectilePrefab, muzzle.position, muzzle.rotation);
+                Invoke("ResetCanShoot", fireRate);
+            }
         }
     }
 
@@ -50,7 +52,6 @@ public class PlayerController : MonoBehaviour
             // Take Damage
             isProtected = true;
             StartCoroutine(PlayerHitFlasing());
-            GameManager.playerHit?.Invoke();
             livesRemaning--;
             hitSound.Play();
             if (livesRemaning <= 0)
